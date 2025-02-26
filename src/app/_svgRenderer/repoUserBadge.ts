@@ -113,22 +113,27 @@ const pr = (count: number, multiline: boolean) => {
     `;
 };
 
-export const createSVG = async (opts: {
-  owner: string,
-  repo: string,
-  contributor: string,
-  multiline: boolean
-}): Promise<string> => {
+interface BadgeParams {
+  owner: string;
+  repo: string;
+  contributor: string;
+  starCount: number;
+  prCount: number;
+  commitCount: number;
+  multiline: boolean;
+}
+
+export const createSVG = async ({owner, repo, contributor, starCount, prCount, commitCount, multiline}: BadgeParams): Promise<string> => {
   const svgString = `
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 300" width="600" height="300">
         <rect width="600" height="300" fill="#3e3e3e" />
         ${styles}
-        ${repoName(opts.owner, opts.repo, opts.multiline)}
-        ${star(opts.multiline)}
-        ${starCounter(1000, opts.multiline)}
-        ${subtitle(opts.contributor, opts.multiline)}
-        ${pr(30, opts.multiline)}
-        ${commit(127, opts.multiline)}
+        ${repoName(owner, repo, multiline)}
+        ${star(multiline)}
+        ${starCounter(starCount, multiline)}
+        ${subtitle(contributor, multiline)}
+        ${pr(prCount, multiline)}
+        ${commit(commitCount, multiline)}
       </svg>
     `;
 
