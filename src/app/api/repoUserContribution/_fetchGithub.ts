@@ -1,3 +1,5 @@
+import '../../../../envConfig';
+
 interface GitHubUser {
   login: string;
   id: number;
@@ -26,37 +28,64 @@ interface PartialPullRequest {
   merged_at: string | null;
 }
 
+interface CallResponse<T> {
+  data: T[];
+  nextUrl: string | null;
+}
+
+const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
+const HEADERS = {
+  "X-GitHub-Api-Version": "2022-11-28", 
+  "Authorization": `Bearer ${GITHUB_TOKEN}`,
+  "Accept": "application/vnd.github+json"
+}
 const TWELVE_HOURS = 60 * 60 * 12;
 
-const paginate = async (URL: string, query?: string) => {
-  const call = async (page: number) => {
-    URL += `?per_page=100&page=${page}&${query || ''}`;
+const call = async <T>(url: string): Promise<CallResponse<T>> => {
+  const res = await fetch(url, { headers: HEADERS, next: { revalidate: TWELVE_HOURS }, });
 
-    // console.log('[fetchGithub] [paginate] [call] Fetching', URL);
-    const res = await fetch(URL, {
-      headers: { "X-GitHub-Api-Version": "2022-11-28" },
-      next: { revalidate: TWELVE_HOURS } 
-    });
-
-    return await res.json();
+  if (!res.ok) {
+    throw new Error(`Failed to fetch ${url}: ${res.status}`);
   }
 
-  let dataAll: any[] = [];
-  let page = 1;
-  while(true) {
-    const data = await call(page);
-    if (data?.length === 0) break;
-    dataAll = dataAll.concat(data);
-    page++;
+  const data: T[] = await res.json();
+  const linkHeader = res.headers.get("link");
+  let nextUrl: string | null = null;
+
+  if (linkHeader) {
+    const nextLink = linkHeader
+      .split(",")
+      .find((link) => link.includes('rel="next"'));
+    if (nextLink) {
+      nextUrl = nextLink.match(/<(.*?)>/)?.[1] || null;
+    }
   }
 
-  return dataAll;
+  return { data, nextUrl };
+}
+
+const paginate = async <T>(baseUrl: string, query?: string): Promise<T[]> => {
+  let allData: T[] = [];
+  let nextUrl: string | null = `${baseUrl}?per_page=100&${query || ''}`;
+
+  try {
+    while (nextUrl) {
+      const { data, nextUrl: newNextUrl }: CallResponse<T> = await call<T>(nextUrl);
+      allData = allData.concat(data);
+      nextUrl = newNextUrl;
+    }
+  } catch (error) {
+    console.error("Error during pagination:", error);
+    throw error;
+  }
+
+  return allData;
 }
 
 export const getRepoStars = async (owner: string, repo: string): Promise<number> => {
   const URL = `https://api.github.com/repos/${owner}/${repo}`;
 
-  const res = await fetch(URL, { next: { revalidate: TWELVE_HOURS } })
+  const res = await fetch(URL, { headers: HEADERS, next: { revalidate: TWELVE_HOURS } })
   const data = await res.json();
   const count = data.stargazers_count;
 
@@ -66,7 +95,7 @@ export const getRepoStars = async (owner: string, repo: string): Promise<number>
 export const getUserCommits = async (owner: string, repo: string, contributor: string): Promise<number> => {
   const URL = `https://api.github.com/repos/${owner}/${repo}/contributors`;
 
-  const data: GitHubUser[] = await paginate(URL);
+  const data = await paginate<GitHubUser>(URL);
   const user = data.find(user => user.login === contributor);
 
   return user ? user.contributions : 0;
@@ -75,7 +104,7 @@ export const getUserCommits = async (owner: string, repo: string, contributor: s
 export const getUserPullRequests = async (owner: string, repo: string, contributor: string): Promise<number> => {
   const URL = `https://api.github.com/repos/${owner}/${repo}/pulls`;
 
-  const data: PartialPullRequest[] = await paginate(URL, 'state=all');
+  const data = await paginate<PartialPullRequest>(URL, 'state=all');
   const pullRequests = data.filter(pr => pr.user.login === contributor && pr.merged_at);
 
   return pullRequests.length > 0 ? pullRequests.length : 0;
