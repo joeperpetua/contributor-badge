@@ -1,5 +1,3 @@
-import '../../../../envConfig';
-
 interface GitHubUser {
   login: string;
   id: number;
@@ -33,7 +31,7 @@ interface CallResponse<T> {
   nextUrl: string | null;
 }
 
-const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
+const GITHUB_TOKEN = process.env.GH_TOKEN;
 const HEADERS = {
   "X-GitHub-Api-Version": "2022-11-28", 
   "Authorization": `Bearer ${GITHUB_TOKEN}`,
@@ -66,7 +64,7 @@ const call = async <T>(url: string): Promise<CallResponse<T>> => {
 
 const paginate = async <T>(baseUrl: string, query?: string): Promise<T[]> => {
   let allData: T[] = [];
-  let nextUrl: string | null = `${baseUrl}?per_page=100&${query || ''}`;
+  let nextUrl: string | null = `${baseUrl}?per_page=80&${query || ''}`;
 
   try {
     while (nextUrl) {
