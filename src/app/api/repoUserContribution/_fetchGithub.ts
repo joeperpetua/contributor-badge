@@ -1,104 +1,11 @@
-interface GqlStartCountVar {
-  owner: string;
-  repo: string;
-}
-
-interface GqlContributionVar {
-  user: string;
-}
-
-interface ContributionByRepo {
-  repository: { nameWithOwner: string };
-  contributions: { totalCount: number };
-}
-
-interface GqlStarCount {
-  repository: {
-    owner: { login: string },
-    name: string, 
-    stargazerCount: number,
-  };
-}
-
-interface GqlUserCommits {
-  user: {
-    contributionsCollection: {
-      commitContributionsByRepository: ContributionByRepo[]
-    }
-  }
-}
-
-interface GqlUserPRs {
-  user: {
-    contributionsCollection: {
-      pullRequestContributionsByRepository: ContributionByRepo[]
-    }
-  }
-}
-
-interface GqlError {
-  type: string;
-  path: string[];
-  locations: { line: number, column: number }[];
-  message: string;
-}
-
-interface GqlResponse<T> {
-  data: T;
-  errors?: GqlError[];
-}
-
-// Also get repo owner and name to display the string in the original case
-const GQL_START_COUNT = `
-query($owner:String!, $repo:String!) {
-  repository(owner: $owner name: $repo){
-    owner { login }
-    name
-    stargazerCount
-  }
-}
-`;
-
-const GQL_USER_COMMITS = `
-query($user:String!) {
-  user(login: $user) {
-    contributionsCollection {
-      commitContributionsByRepository(maxRepositories: 100) {
-        contributions {
-          totalCount
-        }
-        repository {
-          nameWithOwner
-        }
-      }
-    }
-  }
-}
-`;
-
-const GQL_USER_PRS = `
-query($user:String!) {
-  user(login: $user) {
-    contributionsCollection {
-      pullRequestContributionsByRepository(maxRepositories: 100) {
-        contributions {
-          totalCount
-        }
-        repository {
-          nameWithOwner
-        }
-      }
-    }
-  }
-}
-`;
+import { GQL_START_COUNT, GQL_USER_COMMITS, GQL_USER_PRS } from "./_queries";
+import { GqlStartCountVar, GqlContributionVar, GqlResponse, GqlStarCount, GqlUserCommits, GqlUserPRs } from "./_types";
 
 const TWELVE_HOURS = 60 * 60 * 12;
 const GQL_API_URL = 'https://api.github.com/graphql';
-const GITHUB_TOKEN = process.env.GH_TOKEN;
 const HEADERS = {
   "X-GitHub-Api-Version": "2022-11-28",
-  "Authorization": `Bearer ${GITHUB_TOKEN}`,
+  "Authorization": `Bearer ${process.env.GH_TOKEN}`,
   "Content-Type": "application/json",
   "Accept": "application/vnd.github+json"
 }
