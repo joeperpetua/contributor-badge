@@ -125,13 +125,13 @@ const fetchGraphQL = async <T>(query: string, variables: GqlStartCountVar | GqlC
   
     const data: GqlResponse<T> = await res.json();
     if (data.errors) {
-      throw new Error(`Fetch Error: ${data.errors[0].type} | ${data.errors[0].message}`);
+      throw new Error(`${data.errors[0].type} | ${data.errors[0].message}`);
     }
 
     return data;
   } catch (err) {
     console.error('[fetchGraphQL] Failed to fetch Github API: ', err);
-    throw new Error(`Failed to fetch Github API: ${err}`);
+    throw err;
   }
 }
 

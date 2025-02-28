@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Error generating badge:', error);
-    return NextResponse.json({error: 'Internal Server Error', message: 'Error while generating badge.'}, { status: 500 });
+    console.error(error);
+    return NextResponse.json({error: 'Error while generating badge', message: `${error}`}, { status: 500 });
   }
 }
