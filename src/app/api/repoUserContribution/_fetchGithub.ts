@@ -1,109 +1,160 @@
-interface GitHubUser {
-  login: string;
-  id: number;
-  node_id: string;
-  avatar_url: string;
-  gravatar_id: string;
-  url: string;
-  html_url: string;
-  followers_url: string;
-  following_url: string;
-  gists_url: string;
-  starred_url: string;
-  subscriptions_url: string;
-  organizations_url: string;
-  repos_url: string;
-  events_url: string;
-  received_events_url: string;
+interface GqlStartCountVar {
+  owner: string;
+  repo: string;
+}
+
+interface GqlContributionVar {
+  user: string;
+}
+
+interface ContributionByRepo {
+  repository: { nameWithOwner: string };
+  contributions: { totalCount: number };
+}
+
+interface GqlStarCount {
+  repository: {
+    owner: { login: string },
+    name: string, 
+    stargazerCount: number,
+  };
+}
+
+interface GqlUserCommits {
+  user: {
+    contributionsCollection: {
+      commitContributionsByRepository: ContributionByRepo[]
+    }
+  }
+}
+
+interface GqlUserPRs {
+  user: {
+    contributionsCollection: {
+      pullRequestContributionsByRepository: ContributionByRepo[]
+    }
+  }
+}
+
+interface GqlError {
   type: string;
-  user_view_type: string;
-  site_admin: boolean;
-  contributions: number;
+  path: string[];
+  locations: { line: number, column: number }[];
+  message: string;
 }
 
-interface PartialPullRequest { 
-  user: { login: string; };
-  merged_at: string | null;
+interface GqlResponse<T> {
+  data: T;
+  errors?: GqlError[];
 }
 
-interface CallResponse<T> {
-  data: T[];
-  nextUrl: string | null;
+// Also get repo owner and name to display the string in the original case
+const GQL_START_COUNT = `
+query($owner:String!, $repo:String!) {
+  repository(owner: $owner name: $repo){
+    owner { login }
+    name
+    stargazerCount
+  }
 }
+`;
 
+const GQL_USER_COMMITS = `
+query($user:String!) {
+  user(login: $user) {
+    contributionsCollection {
+      commitContributionsByRepository(maxRepositories: 100) {
+        contributions {
+          totalCount
+        }
+        repository {
+          nameWithOwner
+        }
+      }
+    }
+  }
+}
+`;
+
+const GQL_USER_PRS = `
+query($user:String!) {
+  user(login: $user) {
+    contributionsCollection {
+      pullRequestContributionsByRepository(maxRepositories: 100) {
+        contributions {
+          totalCount
+        }
+        repository {
+          nameWithOwner
+        }
+      }
+    }
+  }
+}
+`;
+
+const TWELVE_HOURS = 60 * 60 * 12;
+const GQL_API_URL = 'https://api.github.com/graphql';
 const GITHUB_TOKEN = process.env.GH_TOKEN;
 const HEADERS = {
-  "X-GitHub-Api-Version": "2022-11-28", 
+  "X-GitHub-Api-Version": "2022-11-28",
   "Authorization": `Bearer ${GITHUB_TOKEN}`,
+  "Content-Type": "application/json",
   "Accept": "application/vnd.github+json"
 }
-const TWELVE_HOURS = 60 * 60 * 12;
 
-const call = async <T>(url: string): Promise<CallResponse<T>> => {
-  const res = await fetch(url, { headers: HEADERS, next: { revalidate: TWELVE_HOURS }, });
-
-  if (!res.ok) {
-    throw new Error(`Failed to fetch ${url}: ${res.status}`);
-  }
-
-  const data: T[] = await res.json();
-  const linkHeader = res.headers.get("link");
-  let nextUrl: string | null = null;
-
-  if (linkHeader) {
-    const nextLink = linkHeader
-      .split(",")
-      .find((link) => link.includes('rel="next"'));
-    if (nextLink) {
-      nextUrl = nextLink.match(/<(.*?)>/)?.[1] || null;
-    }
-  }
-
-  return { data, nextUrl };
-}
-
-const paginate = async <T>(baseUrl: string, query?: string): Promise<T[]> => {
-  let allData: T[] = [];
-  let nextUrl: string | null = `${baseUrl}?per_page=80&${query || ''}`;
-
+const fetchGraphQL = async <T>(query: string, variables: GqlStartCountVar | GqlContributionVar): Promise<GqlResponse<T>> => {
   try {
-    while (nextUrl) {
-      const { data, nextUrl: newNextUrl }: CallResponse<T> = await call<T>(nextUrl);
-      allData = allData.concat(data);
-      nextUrl = newNextUrl;
+    const res = await fetch(
+      GQL_API_URL,
+      { 
+        method: 'POST',
+        headers: HEADERS,
+        next: { revalidate: TWELVE_HOURS },
+        body: JSON.stringify({
+          query: query,
+          variables: variables,
+        }), 
+      }
+    );
+  
+    if (!res.ok) {
+      const resText = await res.text(); 
+      throw new Error(`API status: ${res.status} | ${resText}`);
     }
-  } catch (error) {
-    console.error("Error during pagination:", error);
-    throw error;
+  
+    const data: GqlResponse<T> = await res.json();
+    if (data.errors) {
+      throw new Error(`Fetch Error: ${data.errors[0].type} | ${data.errors[0].message}`);
+    }
+
+    return data;
+  } catch (err) {
+    console.error('[fetchGraphQL] Failed to fetch Github API: ', err);
+    throw new Error(`Failed to fetch Github API: ${err}`);
   }
-
-  return allData;
 }
 
-export const getRepoStars = async (owner: string, repo: string): Promise<number> => {
-  const URL = `https://api.github.com/repos/${owner}/${repo}`;
+export const getRepoStars = async (owner: string, repo: string): Promise<{owner: string, repo: string, stars: number}> => {
+  const res = await fetchGraphQL<GqlStarCount>(GQL_START_COUNT, { owner, repo});
 
-  const res = await fetch(URL, { headers: HEADERS, next: { revalidate: TWELVE_HOURS } })
-  const data = await res.json();
-  const count = data.stargazers_count;
-
-  return count ? count : 0;
+  return {
+    owner: res.data.repository.owner.login,
+    repo: res.data.repository.name,
+    stars: res.data.repository.stargazerCount || 0
+  };
 }
 
-export const getUserCommits = async (owner: string, repo: string, contributor: string): Promise<number> => {
-  const URL = `https://api.github.com/repos/${owner}/${repo}/contributors`;
-
-  const data = await paginate<GitHubUser>(URL);
-  const user = data.find(user => user.login === contributor);
-
-  return user ? user.contributions : 0;
+export const getUserCommits = async (owner: string, repo: string, user: string): Promise<number> => {
+  const res = await fetchGraphQL<GqlUserCommits>(GQL_USER_COMMITS, { user });
+  const commitsByRepo = res.data.user.contributionsCollection.commitContributionsByRepository;
+  const commitsToRepo = commitsByRepo.find(contrib => contrib.repository.nameWithOwner.toLowerCase() === `${owner}/${repo}`.toLowerCase());
+  return commitsToRepo ? commitsToRepo.contributions.totalCount : 0;
 }
 
-export const getUserPullRequests = async (owner: string, repo: string, contributor: string): Promise<number> => {
-  const URL = `https://api.github.com/repos/${owner}/${repo}/pulls`;
-
-  const data = await paginate<PartialPullRequest>(URL, 'state=all');
-  const pullRequests = data.filter(pr => pr.user.login === contributor && pr.merged_at);
-
-  return pullRequests.length > 0 ? pullRequests.length : 0;
+export const getUserPullRequests = async (owner: string, repo: string, user: string): Promise<number> => {
+  const res = await fetchGraphQL<GqlUserPRs>(GQL_USER_PRS, { user });
+  const PRsByRepo = res.data.user.contributionsCollection.pullRequestContributionsByRepository;
+  const PRsToRepo = PRsByRepo.find(contrib => contrib.repository.nameWithOwner.toLowerCase() === `${owner}/${repo}`.toLowerCase());
+  return PRsToRepo ? PRsToRepo.contributions.totalCount : 0;
 }

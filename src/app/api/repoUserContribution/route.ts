@@ -7,21 +7,21 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
     const owner = searchParams.get('owner');
     const repo = searchParams.get('repo');
-    const contributor = searchParams.get('contributor');
+    const user = searchParams.get('user');
 
-    if (!owner || !repo || !contributor) {
+    if (!owner || !repo || !user) {
       console.error('Bad request, missing params');
-      return NextResponse.json({error: "Bad Request", message: "Missing owner, repo or contributor parameter."}, { status: 400 });
+      return NextResponse.json({error: "Bad Request", message: "Missing owner, repo or user parameter."}, { status: 400 });
     }
 
-    const [starCount, commitCount, prCount] = await Promise.all([
+    const [repoData, commitCount, prCount] = await Promise.all([
       getRepoStars(owner, repo), 
-      getUserCommits(owner, repo, contributor), 
-      getUserPullRequests(owner, repo, contributor)
+      getUserCommits(owner, repo, user), 
+      getUserPullRequests(owner, repo, user)
     ]);
 
     const multiline = owner.length + repo.length < 23 ? false : true;
-    const svg = await createSVG({ owner, repo, contributor, starCount, prCount, commitCount, multiline});
+    const svg = await createSVG({ owner: repoData.owner, repo: repoData.repo, user, starCount: repoData.stars, prCount, commitCount, multiline});
 
     return new NextResponse(svg, {
       status: 200,
