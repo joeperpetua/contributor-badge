@@ -27,17 +27,17 @@ const styles = `
     </style>
   `;
 
+const truncateEllipsis = (text: string, index: number) => text.split('').slice(0, index).join('') + '...';
+
 const repoName = (owner: string, repo: string, multiline: boolean) => {
   let str = "";
   const full = `${owner}/${repo}`;
 
   if (multiline) {
-    if (full.length < 44) {
-      str = `<text x="20" y="55" class="title">${full.substring(0, 23)}</text><text x="20" y="95" class="title">${full.substring(23)}</text>`;
-    } else {
-      const shortened = full.split('').slice(0, 43).join('') + '...';
-      str = `<text x="20" y="55" class="title">${shortened.substring(0, 23)}</text><text x="20" y="95" class="title">${shortened.substring(23)}</text>`;
-    }
+    owner = owner.length > 22 ? truncateEllipsis(owner, 18): owner;
+    repo = repo.length > 22 ? truncateEllipsis(repo, 18) : repo;
+
+    str = `<text x="20" y="55" class="title">${owner}/</text><text x="20" y="95" class="title">${repo}</text>`;
   } else {
     str = `<text x="20" y="55" class="title">${full}</text>`;
   }
@@ -52,8 +52,6 @@ const star = (multiline: boolean) => {
           d="M6.5209 1.10473C6.66299 0.628786 7.33701 0.628787 7.4791 1.10473L8.58355 4.80404C8.64806 5.02012 8.84923 5.16627 9.07467 5.16085L12.9342 5.0681C13.4308 5.05617 13.6391 5.69719 13.2303 5.97941L10.0534 8.17295C9.86779 8.30108 9.79095 8.53756 9.86577 8.75029L11.1466 12.3923C11.3114 12.8608 10.7662 13.257 10.3714 12.9555L7.30353 10.6119C7.12433 10.475 6.87567 10.475 6.69647 10.6119L3.62856 12.9555C3.23385 13.257 2.68856 12.8608 2.85335 12.3923L4.13423 8.75029C4.20905 8.53756 4.13221 8.30108 3.94664 8.17295L0.769689 5.97941C0.360946 5.69719 0.569229 5.05617 1.06579 5.0681L4.92533 5.16085C5.15077 5.16627 5.35194 5.02012 5.41645 4.80404L6.5209 1.10473Z"
         />
       </svg>
-
-      
     `;
 };
 
@@ -62,12 +60,12 @@ const starCounter = (count: number, multiline: boolean) => {
   return `<text x="540" y="${multiline ? 72 : 57}" class="counter">${countStr}</text>`;
 };
 
-const subtitle = (contributor: string, multiline: boolean) => {
+const subtitle = (user: string, multiline: boolean) => {
   let str = '';
-  if (contributor.length > 22) {
-    str = `${contributor.split('').slice(0, 18).join('') + '...'} contributions:`;
+  if (user.length > 22) {
+    str = `${user.split('').slice(0, 18).join('') + '...'} contributions:`;
   } else {
-    str = `${contributor} contributions:`;
+    str = `${user} contributions:`;
   }
   return `<text x="20" y="${multiline ? 180 : 165}" class="sub-title italic gray">${str}</text>`;
 };
@@ -95,7 +93,7 @@ const commit = (count: number, multiline: boolean) => {
   const countStr = count > 999 ? (count / 1000).toFixed() + 'K' : `${count}`;
   return `
       <svg viewBox="0 0 600 300" x="40" y="${multiline ? 200 : 185}">${commitIcon}</svg>
-      <text x="90" y="${multiline ? 226 : 211}" class="stats">
+      <text x="90" y="${multiline ? 223 : 208}" class="stats">
         ${countStr} 
         <tspan class="italic gray">commits</tspan>
       </text>
@@ -106,7 +104,7 @@ const pr = (count: number, multiline: boolean) => {
   const countStr = count > 999 ? (count / 1000).toFixed() + 'K' : `${count}`;
   return `
       <svg viewBox="0 0 600 300" x="40" y="${multiline ? 240 : 225}">${prIcon}</svg>
-      <text x="90" y="${multiline ? 270 : 255}" class="stats">
+      <text x="90" y="${multiline ? 265 : 250}" class="stats">
         ${countStr} 
         <tspan class="italic gray">pull requests</tspan>
       </text>
@@ -116,14 +114,14 @@ const pr = (count: number, multiline: boolean) => {
 interface BadgeParams {
   owner: string;
   repo: string;
-  contributor: string;
+  user: string;
   starCount: number;
   prCount: number;
   commitCount: number;
   multiline: boolean;
 }
 
-export const createSVG = async ({owner, repo, contributor, starCount, prCount, commitCount, multiline}: BadgeParams): Promise<string> => {
+export const createSVG = async ({owner, repo, user, starCount, prCount, commitCount, multiline}: BadgeParams): Promise<string> => {
   const svgString = `
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 300" width="600" height="300">
         <rect width="600" height="300" fill="#3e3e3e" />
@@ -131,7 +129,7 @@ export const createSVG = async ({owner, repo, contributor, starCount, prCount, c
         ${repoName(owner, repo, multiline)}
         ${star(multiline)}
         ${starCounter(starCount, multiline)}
-        ${subtitle(contributor, multiline)}
+        ${subtitle(user, multiline)}
         ${pr(prCount, multiline)}
         ${commit(commitCount, multiline)}
       </svg>
