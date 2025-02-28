@@ -13,7 +13,7 @@ const styles = `
       font-style: italic;
     }
     text {
-      font-family: "Roboto Mono", serif;
+      font-family: "Roboto Mono", 'Segoe UI', Ubuntu, Sans-Serif;
       fill: white;
     }
     .italic {
@@ -26,7 +26,7 @@ const styles = `
       font-size: 1.6rem;
     }
     .stats {
-    font-size: 1.4rem;
+      font-size: 1.4rem;
     }
     .counter {
       font-size: 1.75rem;
