@@ -4,6 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
+    "ngrok": "ngrok http http://localhost:3000",
+    "ingrok": "ngrok http --url=direct-usefully-crappie.ngrok-free.app 3000",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
