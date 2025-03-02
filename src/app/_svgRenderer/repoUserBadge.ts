@@ -1,56 +1,53 @@
-const styles = `
-  <style>
-    @font-face {
-      font-family: "Roboto Mono";
-      src: url("/fonts/RobotoMono-VariableFont_wght.ttf");
-      font-weight: 100 700;
-      font-style: normal;
-    }
-    @font-face {
-      font-family: "Roboto Mono";
-      src: url("/fonts/RobotoMono-Italic-VariableFont_wght.ttf");
-      font-weight: 100 700;
-      font-style: italic;
-    }
-    text {
-      font-family: "Roboto Mono", 'Segoe UI', Ubuntu, Sans-Serif;
-      fill: white;
-    }
-    .italic {
-      font-style: italic;
-    }
-    .title {
-      font-size: 2rem;
-    }
-    .sub-title {
-      font-size: 1.6rem;
-    }
-    .stats {
-      font-size: 1.4rem;
-    }
-    .counter {
-      font-size: 1.75rem;
-      letter-spacing: -2px;
-    }
-    .gray {
-      fill: #D2D2D2;
-    }
-  </style>
-`;
+
+import { fonts } from "./fonts";
+import { themes } from "./themes/themes";
+
+interface BadgeParams {
+  owner: string;
+  repo: string;
+  user: string;
+  starCount: number;
+  prCount: number;
+  commitCount: number;
+  multiline: boolean;
+  themeOptions: ThemeOptions;
+}
+
+interface ThemeOptions {
+  preset: string | null;
+  borderRadius: string | null;
+  transparent: boolean | null;
+  showOwner: boolean | null;
+  fontStyle: string | null;
+}
+
+const themeDefaults = (themeOptions: ThemeOptions) => {
+  themeOptions.preset = themeOptions.preset || "caveman";
+  themeOptions.borderRadius = themeOptions.borderRadius || "10";
+  themeOptions.transparent = themeOptions.transparent || false;
+  themeOptions.showOwner = themeOptions.showOwner || true;
+  themeOptions.fontStyle = themeOptions.fontStyle || "sans-serif";
+
+  return themeOptions;
+}; 
 
 const truncateEllipsis = (text: string, index: number) => text.split('').slice(0, index).join('') + '...';
 
 const repoName = (owner: string, repo: string, multiline: boolean) => {
   let str = "";
-  const full = `${owner}/${repo}`;
 
   if (multiline) {
     owner = owner.length > 22 ? truncateEllipsis(owner, 19) : owner; // Trim one char before than repo name to account for '/' char
     repo = repo.length > 22 ? truncateEllipsis(repo, 20) : repo;
 
-    str = `<text x="20" y="55" class="title">${owner}/</text><text x="20" y="95" class="title">${repo}</text>`;
+    str = `<text x="20" y="55" class="title owner">${owner}/</text><text x="20" y="95" class="title">${repo}</text>`;
   } else {
-    str = `<text x="20" y="55" class="title">${full}</text>`;
+    str = `
+    <text x="20" y="55" class="title">
+      <tspan class="owner">${owner}/</tspan>
+      <tspan>${repo}</tspan>  
+    </text>
+    `;
   }
 
   return str;
@@ -75,12 +72,12 @@ const subtitle = (user: string, multiline: boolean) => {
   user = user.length > 22 ? truncateEllipsis(user, 19) : user;
   const str = `${user} contributions:`;
 
-  return `<text x="20" y="${multiline ? 180 : 165}" class="sub-title italic gray">${str}</text>`;
+  return `<text x="20" y="${multiline ? 180 : 165}" class="sub-title italic secondary">${str}</text>`;
 };
 
 const commitIcon = `
     <path 
-      transform="scale(1.75)" fill="#D2D2D2"
+      transform="scale(1.75)" class="icon-commit"
       d="M9 11.25C9.59674 11.25 10.169 11.0129 10.591 10.591C11.0129 10.169 11.25 9.59674 11.25 9C11.25 8.40326 11.0129 7.83097 10.591 7.40901C10.169 6.98705 9.59674 6.75 9 6.75C8.40326 6.75 7.83097 6.98705 7.40901 7.40901C6.98705 7.83097 6.75 8.40326 6.75 9C6.75 9.59674 6.98705 10.169 7.40901 10.591C7.83097 11.0129 8.40326 11.25 9 11.25ZM13.41 9.9C12.9937 11.9531 11.1769 13.5 9 13.5C6.82312 13.5 5.00625 11.9531 4.59 9.9H0.9C0.402187 9.9 0 9.49781 0 9C0 8.50219 0.402187 8.1 0.9 8.1H4.59C5.00625 6.04687 6.82312 4.5 9 4.5C11.1769 4.5 12.9937 6.04687 13.41 8.1H17.1C17.5978 8.1 18 8.50219 18 9C18 9.49781 17.5978 9.9 17.1 9.9H13.41Z" 
     />
   `;
@@ -88,7 +85,7 @@ const commitIcon = `
 const prIcon = `
     <path 
       transform="scale(1.75)" 
-      stroke="#D2D2D2" 
+      class="icon-pr" 
       fill="none" 
       stroke-width="2" 
       stroke-linecap="round" 
@@ -103,7 +100,7 @@ const commit = (count: number, multiline: boolean) => {
       <svg viewBox="0 0 600 300" x="40" y="${multiline ? 200 : 185}">${commitIcon}</svg>
       <text x="90" y="${multiline ? 223 : 208}" class="stats">
         ${countStr} 
-        <tspan class="italic gray">commits</tspan>
+        <tspan class="italic secondary">commits</tspan>
       </text>
     `;
 };
@@ -114,26 +111,28 @@ const pr = (count: number, multiline: boolean) => {
       <svg viewBox="0 0 600 300" x="40" y="${multiline ? 240 : 225}">${prIcon}</svg>
       <text x="90" y="${multiline ? 265 : 250}" class="stats">
         ${countStr} 
-        <tspan class="italic gray">pull requests</tspan>
+        <tspan class="italic secondary">pull requests</tspan>
       </text>
     `;
 };
 
-interface BadgeParams {
-  owner: string;
-  repo: string;
-  user: string;
-  starCount: number;
-  prCount: number;
-  commitCount: number;
-  multiline: boolean;
-}
+export const createSVG = async ({ 
+  owner, 
+  repo, 
+  user, 
+  starCount, 
+  prCount, 
+  commitCount, 
+  multiline,
+  themeOptions
+}: BadgeParams): Promise<string> => {
+  themeOptions = themeDefaults(themeOptions);
 
-export const createSVG = async ({ owner, repo, user, starCount, prCount, commitCount, multiline }: BadgeParams): Promise<string> => {
   const svgString = `
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 300" width="600" height="300">
-        <rect width="600" height="300" fill="#3e3e3e" />
-        ${styles}
+        <rect width="600" height="300" rx="${themeOptions.borderRadius}" ry="${themeOptions.borderRadius}" />
+        ${themes[themeOptions.preset!]}
+        ${fonts[themeOptions.fontStyle!]}
         ${repoName(owner, repo, multiline)}
         ${star(multiline)}
         ${starCounter(starCount, multiline)}

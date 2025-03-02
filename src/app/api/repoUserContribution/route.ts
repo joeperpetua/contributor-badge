@@ -8,6 +8,13 @@ export async function GET(request: NextRequest) {
     const owner = searchParams.get('owner');
     const repo = searchParams.get('repo');
     const user = searchParams.get('user');
+    const themeOptions = {
+      preset: searchParams.get('theme'),
+      borderRadius: searchParams.get('borderRadius'),
+      transparent: !!searchParams.get('transparent'),
+      showOwner: !!searchParams.get('showOwner'),
+      fontStyle: searchParams.get('fontStyle'),
+    };
 
     if (!owner || !repo || !user) {
       console.error('Bad request, missing params');
@@ -20,8 +27,9 @@ export async function GET(request: NextRequest) {
       getUserPullRequests(owner, repo, user)
     ]);
 
+    console.log(themeOptions);
     const multiline = owner.length + repo.length < 23 ? false : true;
-    const svg = await createSVG({ owner: repoData.owner, repo: repoData.repo, user, starCount: repoData.stars, prCount, commitCount, multiline});
+    const svg = await createSVG({ owner: repoData.owner, repo: repoData.repo, user, starCount: repoData.stars, prCount, commitCount, multiline, themeOptions});
 
     return new NextResponse(svg, {
       status: 200,
