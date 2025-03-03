@@ -127,4 +127,9 @@ Now your deployment should be accessible in the URL created by Vercel.
 
 ## Contributions
 Contributions are welcomed, feel free to create any issue or PR for further development.
+Some nice features would be:
+- More personalization options
+- More themes
+- Different locales
+- Custom contribution types (issues, reviews, etc.)
 
