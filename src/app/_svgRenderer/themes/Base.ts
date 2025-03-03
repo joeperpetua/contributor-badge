@@ -14,7 +14,7 @@ export const base = `
   }
   .counter {
     font-size: 1.75rem;
-    letter-spacing: -2px;
+    font-weight: bold;
   }
   .owner {
     font-weight: bold;

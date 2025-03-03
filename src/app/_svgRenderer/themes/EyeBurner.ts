@@ -1,7 +1,7 @@
-export const eyeBurner = `
+export const eyeBurner = (transparent: boolean) => `
 <style>
   rect {
-    fill: white;
+    fill: ${transparent ? 'rgba(0, 0, 0, 0)' : 'white'};
   }
   text {
     fill: black;

@@ -1,7 +1,7 @@
-export const caveman = `
+export const caveman = (transparent: boolean) => `
 <style>
   rect {
-    fill: #3e3e3e;
+        fill: ${transparent ? 'rgba(0, 0, 0, 0)' : 'rgb(62, 62, 62)'};
   }
   text {
     fill: white;

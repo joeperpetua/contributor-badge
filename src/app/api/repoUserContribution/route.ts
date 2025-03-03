@@ -9,10 +9,10 @@ export async function GET(request: NextRequest) {
     const repo = searchParams.get('repo');
     const user = searchParams.get('user');
     const themeOptions = {
-      preset: searchParams.get('theme'),
+      theme: searchParams.get('theme'),
       borderRadius: searchParams.get('borderRadius'),
-      transparent: !!searchParams.get('transparent'),
-      showOwner: !!searchParams.get('showOwner'),
+      transparent: searchParams.get('transparent')?.toLowerCase() === 'true' ? true : false, // default false
+      showOwner: searchParams.get('showOwner')?.toLowerCase() === 'false' ? false : true, // default true
       fontStyle: searchParams.get('fontStyle'),
     };
 
@@ -27,8 +27,7 @@ export async function GET(request: NextRequest) {
       getUserPullRequests(owner, repo, user)
     ]);
 
-    console.log(themeOptions);
-    const multiline = owner.length + repo.length < 23 ? false : true;
+    const multiline = owner.length + repo.length > 22 && themeOptions.showOwner ? true : false;
     const svg = await createSVG({ owner: repoData.owner, repo: repoData.repo, user, starCount: repoData.stars, prCount, commitCount, multiline, themeOptions});
 
     return new NextResponse(svg, {
