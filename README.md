@@ -1,36 +1,135 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Contributor Badge
+<img src='readme-img/icon.png' height="100" width="auto" align="left">
+<br>
+Simple and customizable badges to showcase your OSS contributions  
 
-## Getting Started
+in your Github profile or personal website.  
+<br>
 
-First, run the development server:
+## Table of Contents
+- [Usage](#usage)
+- [Themes](#themes)
+  - [Caveman](#caveman-default)
+  - [EyeBurner](#eyeburner)
+- [Display options](#display-options)
+  - [showOwner](#showowner)
+  - [borderRadius](#borderradius)
+  - [transparent](#transparent)
+  - [fontStyle](#fontstyle)
+- [Deployment](#deployment)
+- [Contributions](#contributions)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Usage
+The badges are served as SVG images, so they will need to be displayed by a `<img>` or `<picture>` tag.
+```html
+<img height="200px" width="auto" src="https://contributor-badge.vercel.app/api/repoUserContribution?owner=REPO_OWNER&repo=REPO_NAME&user=CONTRIBUTOR">     
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+You can set the size as you see fit using the `height` attribute and setting `width` to auto. 
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+You can add a custom link to the repository by wrapping the badge in a `<a>` tag:
+```html
+<a href="https://gihtub.com/REPO_OWNER/REPO_NAME" target="_blank"><img height="200px" width="auto" src="https://contributor-badge.vercel.app/api/repoUserContribution?owner=REPO_OWNER&repo=REPO_NAME&user=CONTRIBUTOR"></a>
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Themes
+You can choose any of the following themes by specifying the `theme` param in the URL:
 
-## Learn More
+### Caveman (default)
+`&theme=caveman`  
 
-To learn more about Next.js, take a look at the following resources:
+<img height="200px" width="auto" src="https://contributor-badge.vercel.app/api/repoUserContribution?owner=joeperpetua&repo=contributor-badge&user=joeperpetua">
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### EyeBurner
+`&theme=eyeBurner` 
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+<img height="200px" width="auto" src="https://contributor-badge.vercel.app/api/repoUserContribution?owner=joeperpetua&repo=contributor-badge&user=joeperpetua&theme=eyeBurner">
 
-## Deploy on Vercel
+## Display options
+The following options can be set using query params:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### `showOwner`
+Wether to display or not the repository owner.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+`&showOwner=true` (default)  
+<img height="150px" width="auto" src="https://contributor-badge.vercel.app/api/repoUserContribution?owner=joeperpetua&repo=contributor-badge&user=joeperpetua">  
+
+`&showOwner=false`  
+<img height="150px" width="auto" src="https://contributor-badge.vercel.app/api/repoUserContribution?owner=joeperpetua&repo=contributor-badge&user=joeperpetua&showOwner=false">
+
+---
+
+### `borderRadius`
+Specify the border radius for the badge.
+
+`&borderRadius=10` (default)  
+<img height="150px" width="auto" src="https://contributor-badge.vercel.app/api/repoUserContribution?owner=joeperpetua&repo=contributor-badge&user=joeperpetua">  
+
+`&borderRadius=0`    
+<img height="150px" width="auto" src="https://contributor-badge.vercel.app/api/repoUserContribution?owner=joeperpetua&repo=contributor-badge&user=joeperpetua&borderRadius=0">  
+
+---
+
+### `transparent`
+Wheter the badge has a solid background or not.
+
+`&transparent=false` (default)  
+<img height="150px" width="auto" src="https://contributor-badge.vercel.app/api/repoUserContribution?owner=joeperpetua&repo=contributor-badge&user=joeperpetua">  
+
+`&transparent=true`  
+<img height="150px" width="auto" src="https://contributor-badge.vercel.app/api/repoUserContribution?owner=joeperpetua&repo=contributor-badge&user=joeperpetua&transparent=true">  
+
+---
+
+### `fontStyle`
+What font style to use. The badge will use websafe fonts for each OS/device, so the fonts used may differ depending where the badge is being served.
+
+`&fontStyle=sans-serif` (default)  
+<img height="150px" width="auto" src="https://contributor-badge.vercel.app/api/repoUserContribution?owner=joeperpetua&repo=contributor-badge&user=joeperpetua">  
+
+`&fontStyle=serif`  
+<img height="150px" width="auto" src="https://contributor-badge.vercel.app/api/repoUserContribution?owner=joeperpetua&repo=contributor-badge&user=joeperpetua&fontStyle=serif">  
+
+`&fontStyle=monospace`  
+<img height="150px" width="auto" src="https://contributor-badge.vercel.app/api/repoUserContribution?owner=joeperpetua&repo=contributor-badge&user=joeperpetua&fontStyle=monospace">  
+
+`&fontStyle=cursive`  
+<img height="150px" width="auto" src="https://contributor-badge.vercel.app/api/repoUserContribution?owner=joeperpetua&repo=contributor-badge&user=joeperpetua&fontStyle=cursive">  
+
+## Deployment
+The current endpoint has a 12 hours cache to avoid reaching the Github API rate limiting.
+You can deploy your own instance and set the CACHE_SECONDS environment variable to avoid this caching mechanism.
+
+For this, you will need to create a fork of this repository and create an access token.
+
+1. Create fork  
+![alt text](readme-img/fork.png)
+
+2. Create Github access token
+  - Go to https://github.com/settings/tokens/new
+  - Check the "public_repo" box
+  ![alt text](readme-img/gh-token.png)
+  - Scroll to the bottom of the page and click "Generate token"
+  - Copy the token
+  ![alt text](readme-img/gh-token-copy.png)
+
+3. Deploy in Vercel (or the provider you prefer)
+   - Create account with Github in https://vercel.com
+   - Create new Project
+   ![alt text](readme-img/vercel-project.png)
+   - Import from your fork repository
+   ![alt text](readme-img/vercel-import.png)
+   - Set the Environment variables `GH_TOKEN` and `CACHE_SECONDS`
+   ![alt text](readme-img/vercel-env.png)
+   - Click "Deploy"
+
+Now your deployment should be accessible in the URL created by Vercel.
+
+## Contributions
+Contributions are welcomed, feel free to create any issue or PR for further development.
+Some nice features would be:
+- More personalization options
+- More themes
+- Different locales
+- Custom contribution types (issues, reviews, etc.)
+
