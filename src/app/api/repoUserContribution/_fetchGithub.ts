@@ -2,8 +2,6 @@ import { GQL_START_COUNT, GQL_USER_COMMITS, GQL_USER_PRS } from "./_queries";
 import { GqlStartCountVar, GqlContributionVar, GqlResponse, GqlStarCount, GqlUserCommits, GqlUserPRs } from "./_types";
 
 const CACHE_SECONDS = parseInt(process.env.CACHE_SECONDS || "43200") ; // 12 hours default if cache not specified
-console.log("Running with CACHE", CACHE_SECONDS);
-
 const GQL_API_URL = 'https://api.github.com/graphql';
 const HEADERS = {
   "X-GitHub-Api-Version": "2022-11-28",
