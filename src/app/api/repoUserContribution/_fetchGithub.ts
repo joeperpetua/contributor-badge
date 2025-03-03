@@ -1,7 +1,7 @@
 import { GQL_START_COUNT, GQL_USER_COMMITS, GQL_USER_PRS } from "./_queries";
 import { GqlStartCountVar, GqlContributionVar, GqlResponse, GqlStarCount, GqlUserCommits, GqlUserPRs } from "./_types";
 
-const TWELVE_HOURS = 60 * 60 * 12;
+const CACHE_SECONDS = parseInt(process.env.CACHE_SECONDS || "43200") ; // 12 hours default if cache not specified
 const GQL_API_URL = 'https://api.github.com/graphql';
 const HEADERS = {
   "X-GitHub-Api-Version": "2022-11-28",
@@ -17,7 +17,7 @@ const fetchGraphQL = async <T>(query: string, variables: GqlStartCountVar | GqlC
       { 
         method: 'POST',
         headers: HEADERS,
-        next: { revalidate: TWELVE_HOURS },
+        next: { revalidate: CACHE_SECONDS },
         body: JSON.stringify({
           query: query,
           variables: variables,

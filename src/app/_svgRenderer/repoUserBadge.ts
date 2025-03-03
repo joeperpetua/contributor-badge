@@ -35,7 +35,6 @@ const truncateEllipsis = (text: string, index: number) => text.split('').slice(0
 
 const repoName = (owner: string, repo: string, multiline: boolean, showOwner: boolean) => {
   let str = "";
-  console.log(showOwner, multiline)
 
   if (multiline) {
     owner = owner.length > 22 ? truncateEllipsis(owner, 19) : owner; // Trim one char before than repo name to account for '/' char
