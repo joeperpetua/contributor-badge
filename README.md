@@ -1,12 +1,23 @@
 # Contributor Badge
-Simple and good-looking badges to showcase your OSS contributions in your Github profile or personal website.
+<img src='readme-img/icon.png' height="100" width="auto" align="left">
+<br>
+Simple and customizable badges to showcase your OSS contributions  
+
+in your Github profile or personal website.  
+<br>
 
 ## Table of Contents
-- Usage
-- Themes
-- Display options
-- Deployment
-- Contributions
+- [Usage](#usage)
+- [Themes](#themes)
+  - [Caveman](#caveman-default)
+  - [EyeBurner](#eyeburner)
+- [Display options](#display-options)
+  - [showOwner](#showowner)
+  - [borderRadius](#borderradius)
+  - [transparent](#transparent)
+  - [fontStyle](#fontstyle)
+- [Deployment](#deployment)
+- [Contributions](#contributions)
 
 ## Usage
 The badges are served as SVG images, so they will need to be displayed by a `<img>` or `<picture>` tag.
@@ -114,6 +125,6 @@ For this, you will need to create a fork of this repository and create an access
 
 Now your deployment should be accessible in the URL created by Vercel.
 
-## Contributing
+## Contributions
 Contributions are welcomed, feel free to create any issue or PR for further development.
 
