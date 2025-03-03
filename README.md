@@ -1,4 +1,4 @@
-# Contributor Badge
+# Github Contributor Badge
 <img src='readme-img/icon.png' height="100" width="auto" align="left">
 <br>
 Simple and customizable badges to showcase your OSS contributions  
