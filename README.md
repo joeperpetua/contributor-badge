@@ -103,13 +103,13 @@ What font style to use. The badge will use websafe fonts for each OS/device, so 
 What entry animation to use.
 
 `&animation=slide` (default)  
-<a href="https://contributor-badge.vercel.app/api/repoUserContribution?owner=joeperpetua&repo=contributor-badge&user=joeperpetua&animation=slide" target="_blank" rel="noreferer">Preview ▶️</a>
+<a href="https://contributor-badge.vercel.app/api/repoUserContribution?owner=joeperpetua&repo=contributor-badge&user=joeperpetua&animation=slide" target="_blank" rel="noreferrer">Preview ▶️</a>
 
 `&animation=fade`  
-<a href="https://contributor-badge.vercel.app/api/repoUserContribution?owner=joeperpetua&repo=contributor-badge&user=joeperpetua&animation=fade" target="_blank" rel="noreferer">Preview ▶️</a>
+<a href="https://contributor-badge.vercel.app/api/repoUserContribution?owner=joeperpetua&repo=contributor-badge&user=joeperpetua&animation=fade" target="_blank" rel="noreferrer">Preview ▶️</a>
 
 `&animation=none`  
-<a href="https://contributor-badge.vercel.app/api/repoUserContribution?owner=joeperpetua&repo=contributor-badge&user=joeperpetua&animation=none" target="_blank" rel="noreferer">Preview ▶️</a>
+<a href="https://contributor-badge.vercel.app/api/repoUserContribution?owner=joeperpetua&repo=contributor-badge&user=joeperpetua&animation=none" target="_blank" rel="noreferrer">Preview ▶️</a>
 
 ## Deployment
 The current endpoint has a 12 hours cache to avoid reaching the Github API rate limiting.
