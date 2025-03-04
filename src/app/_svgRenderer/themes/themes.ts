@@ -2,22 +2,16 @@ import { base } from "./Base";
 import { eyeBurner } from "./EyeBurner";
 import { caveman } from "./Caveman";
 
-type Animation = "none" | "fade" | "slide"; 
+// type Animation = "none" | "fade" | "slide"; 
 
 const animations = (type: string) => `
 <style>
-  .title, 
-  .sub-title, 
-  .stats, 
-  .icon-pr, 
-  .icon-commit {
+  .enter-left {
     animation: 2s ${type === 'slide' ? 'slide-left-right' : type};
-    transform-origin: 0px 0px;
   }
   
-  .icon-star, .counter {
+  .enter-right {
     animation: 2s ${type === 'slide' ? 'slide-right-left' : type};
-    transform-origin: 0px 0px;
   }
 
   @keyframes fade {
