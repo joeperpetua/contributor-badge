@@ -102,11 +102,11 @@ What font style to use. The badge will use websafe fonts for each OS/device, so 
 ### `animation`
 What entry animation to use.
 
-`&animation=fade` (default)  
+`&animation=slide` (default)  
 <img height="150px" width="auto" src="https://contributor-badge.vercel.app/api/repoUserContribution?owner=joeperpetua&repo=contributor-badge&user=joeperpetua">  
 
-`&animation=slide`  
-<img height="150px" width="auto" src="https://contributor-badge.vercel.app/api/repoUserContribution?owner=joeperpetua&repo=contributor-badge&user=joeperpetua&animation=slide">  
+`&animation=fade`  
+<img height="150px" width="auto" src="https://contributor-badge.vercel.app/api/repoUserContribution?owner=joeperpetua&repo=contributor-badge&user=joeperpetua&animation=fade">  
 
 `&animation=none`  
 <img height="150px" width="auto" src="https://contributor-badge.vercel.app/api/repoUserContribution?owner=joeperpetua&repo=contributor-badge&user=joeperpetua&animation=none">  
