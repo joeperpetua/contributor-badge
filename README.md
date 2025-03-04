@@ -16,6 +16,7 @@ in your Github profile or personal website.
   - [borderRadius](#borderradius)
   - [transparent](#transparent)
   - [fontStyle](#fontstyle)
+  - [animation](#animation)
 - [Deployment](#deployment)
 - [Contributions](#contributions)
 
@@ -95,6 +96,21 @@ What font style to use. The badge will use websafe fonts for each OS/device, so 
 
 `&fontStyle=cursive`  
 <img height="150px" width="auto" src="https://contributor-badge.vercel.app/api/repoUserContribution?owner=joeperpetua&repo=contributor-badge&user=joeperpetua&fontStyle=cursive">  
+
+---
+
+### `animation`
+What entry animation to use.
+
+`&animation=fade` (default)  
+<img height="150px" width="auto" src="https://contributor-badge.vercel.app/api/repoUserContribution?owner=joeperpetua&repo=contributor-badge&user=joeperpetua">  
+
+`&animation=slide`  
+<img height="150px" width="auto" src="https://contributor-badge.vercel.app/api/repoUserContribution?owner=joeperpetua&repo=contributor-badge&user=joeperpetua&animation=slide">  
+
+`&animation=none`  
+<img height="150px" width="auto" src="https://contributor-badge.vercel.app/api/repoUserContribution?owner=joeperpetua&repo=contributor-badge&user=joeperpetua&animation=none">  
+
 
 ## Deployment
 The current endpoint has a 12 hours cache to avoid reaching the Github API rate limiting.
