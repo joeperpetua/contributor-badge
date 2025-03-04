@@ -14,6 +14,7 @@ export async function GET(request: NextRequest) {
       transparent: searchParams.get('transparent')?.toLowerCase() === 'true' ? true : false, // default false
       showOwner: searchParams.get('showOwner')?.toLowerCase() === 'false' ? false : true, // default true
       fontStyle: searchParams.get('fontStyle'),
+      animation: searchParams.get('animation')
     };
 
     if (!owner || !repo || !user) {

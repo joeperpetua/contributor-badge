@@ -19,6 +19,7 @@ interface ThemeOptions {
   transparent: boolean;
   showOwner: boolean;
   fontStyle: string | null;
+  animation: string | null;
 }
 
 const themeDefaults = (themeOptions: ThemeOptions) => {
@@ -27,6 +28,7 @@ const themeDefaults = (themeOptions: ThemeOptions) => {
   themeOptions.borderRadius = themeOptions.borderRadius || "10";
   themeOptions.transparent = themeOptions.transparent != null ? themeOptions.transparent : true;
   themeOptions.fontStyle = themeOptions.fontStyle || "sans-serif";
+  themeOptions.animation = themeOptions.animation || "fade";
 
   return themeOptions;
 }; 
@@ -105,7 +107,7 @@ export const createSVG = async ({
   const svgString = `
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 300" width="600" height="300">
         <rect width="600" height="300" rx="${themeOptions.borderRadius}" ry="${themeOptions.borderRadius}" />
-        ${themes(themeOptions.theme!, themeOptions.transparent)}
+        ${themes(themeOptions.theme!, themeOptions.transparent, themeOptions.animation!)}
         ${fonts[themeOptions.fontStyle!]}
         ${repoName(owner, repo, multiline, themeOptions.showOwner!)}
         ${star(multiline)}
