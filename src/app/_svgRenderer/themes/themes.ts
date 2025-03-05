@@ -7,12 +7,12 @@ import { caveman } from "./Caveman";
 const animations = (type: string) => `
 <style>
   .enter-left {
-    animation-duration: ${type === 'slide' ? '2s' : '3s'}
+    animation-duration: ${type === 'slide' ? '2s' : '3s'};
     animation-name: ${type === 'slide' ? 'slide-left-right' : type};
   }
   
   .enter-right {
-    animation-duration: ${type === 'slide' ? '2s' : '3s'}
+    animation-duration: ${type === 'slide' ? '2s' : '3s'};
     animation-name: ${type === 'slide' ? 'slide-right-left' : type};
   }
 
