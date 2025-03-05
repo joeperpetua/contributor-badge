@@ -6,6 +6,11 @@ import { caveman } from "./Caveman";
 
 const animations = (type: string) => `
 <style>
+
+  /* ************ */
+  /*  ANIMATIONS  */
+  /* ************ */
+
   .enter-left {
     animation-duration: ${type === 'slide' ? '2s' : '3s'};
     animation-name: ${type === 'slide' ? 'slide-left-right' : type};
