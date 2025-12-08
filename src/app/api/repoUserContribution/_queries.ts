@@ -9,10 +9,18 @@ query($owner:String!, $repo:String!) {
 }
 `;
 
-export const GQL_USER_COMMITS = `
+export const GQL_USER_CREATION_DATE = `
 query($user:String!) {
   user(login: $user) {
-    contributionsCollection {
+    createdAt
+  }
+}
+`;
+
+export const GQL_USER_COMMITS = `
+query($user:String!, $from: DateTime!, $to: DateTime!) {
+  user(login: $user) {
+    contributionsCollection (from: $from, to: $to) {
       commitContributionsByRepository(maxRepositories: 100) {
         contributions {
           totalCount
@@ -27,18 +35,26 @@ query($user:String!) {
 `;
 
 export const GQL_USER_PRS = `
-query($user:String!) {
+query($user:String!, $after: String) {
   user(login: $user) {
-    contributionsCollection {
-      pullRequestContributionsByRepository(maxRepositories: 100) {
-        contributions {
-          totalCount
-        }
+    pullRequests(
+      first: 100
+      states: [MERGED]
+      orderBy: {field: CREATED_AT, direction: DESC}
+      after: $after
+    ) {
+      totalCount
+      nodes {
+        title
+        state
         repository {
           nameWithOwner
         }
       }
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
     }
   }
-}
-`;
+}`;

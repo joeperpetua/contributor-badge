@@ -1,7 +1,7 @@
 export const caveman = (transparent: boolean) => `
 <style>
   .bg {
-    background-color:  ${transparent ? 'rgba(0, 0, 0, 0)' : 'rgb(62, 62, 62)'};
+    background-color:  ${transparent ? "rgba(0, 0, 0, 0)" : "rgb(62, 62, 62)"};
   }
 
   p {
