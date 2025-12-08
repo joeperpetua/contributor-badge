@@ -2,7 +2,7 @@ import { base } from "./Base";
 import { eyeBurner } from "./EyeBurner";
 import { caveman } from "./Caveman";
 
-// type Animation = "none" | "fade" | "slide"; 
+// type Animation = "none" | "fade" | "slide";
 
 const animations = (type: string) => `
 <style>
@@ -12,13 +12,13 @@ const animations = (type: string) => `
   /* ************ */
 
   .enter-left {
-    animation-duration: ${type === 'slide' ? '2s' : '3s'};
-    animation-name: ${type === 'slide' ? 'slide-left-right' : type};
+    animation-duration: ${type === "slide" ? "2s" : "3s"};
+    animation-name: ${type === "slide" ? "slide-left-right" : type};
   }
   
   .enter-right {
-    animation-duration: ${type === 'slide' ? '2s' : '3s'};
-    animation-name: ${type === 'slide' ? 'slide-right-left' : type};
+    animation-duration: ${type === "slide" ? "2s" : "3s"};
+    animation-name: ${type === "slide" ? "slide-right-left" : type};
   }
 
   @keyframes fade {
@@ -53,13 +53,17 @@ const animations = (type: string) => `
 </style>
 `;
 
-export const themes = (theme: string, transparent: boolean, animation: string) => {
-  switch(theme) {
+export const themes = (
+  theme: string,
+  transparent: boolean,
+  animation: string,
+) => {
+  switch (theme) {
     case "caveman":
       return caveman(transparent) + animations(animation) + base;
     case "eyeBurner":
       return eyeBurner(transparent) + animations(animation) + base;
-    default: 
+    default:
       throw Error("Invalid Theme");
   }
-}
+};

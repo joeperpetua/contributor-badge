@@ -26,29 +26,36 @@ const themeDefaults = (themeOptions: ThemeOptions) => {
   // showOwner & transparent default val is already set when parsing from query params
   themeOptions.theme = themeOptions.theme || "caveman";
   themeOptions.borderRadius = themeOptions.borderRadius || "10";
-  themeOptions.transparent = themeOptions.transparent != null ? themeOptions.transparent : true;
+  themeOptions.transparent =
+    themeOptions.transparent != null ? themeOptions.transparent : true;
   themeOptions.fontStyle = themeOptions.fontStyle || "sans-serif";
   themeOptions.animation = themeOptions.animation || "slide";
 
   return themeOptions;
-}; 
+};
 
-const repoName = (owner: string, repo: string, multiline: boolean, showOwner: boolean) => `
-  <div class="flex title ${multiline ? 'col' : 'row'} enter-left">
-    ${showOwner ? `
+const repoName = (
+  owner: string,
+  repo: string,
+  multiline: boolean,
+  showOwner: boolean,
+) => `
+  <div class="flex title ${multiline ? "col" : "row"} enter-left">
+    ${
+      showOwner
+        ? `
       <p class="flex">
         <p class="bold ellipsis">${owner}</p>
         /
       </p>`
-      : 
-      ``
+        : ``
     }
     <p class="ellipsis">${repo}</p>
   </div>
 `;
 
 const starCounter = (count: number) => {
-  const countStr = count > 999 ? (count / 1000).toFixed() + 'K' : `${count}`;
+  const countStr = count > 999 ? (count / 1000).toFixed() + "K" : `${count}`;
 
   return `
     <div class="flex row justify-center items-center enter-right" style="width: 20%; gap: 1rem;">
@@ -66,7 +73,7 @@ const subtitle = (user: string) => `
 `;
 
 const commitInfo = (count: number) => {
-  const countStr = count > 999 ? (count / 1000).toFixed() + 'K' : `${count}`;
+  const countStr = count > 999 ? (count / 1000).toFixed() + "K" : `${count}`;
 
   return `
     <div class="flex row w-full items-center enter-left" style="gap: 1rem; padding: 0 1.25rem;">
@@ -80,8 +87,8 @@ const commitInfo = (count: number) => {
 };
 
 const prInfo = (count: number) => {
-  const countStr = count > 999 ? (count / 1000).toFixed() + 'K' : `${count}`;
-  
+  const countStr = count > 999 ? (count / 1000).toFixed() + "K" : `${count}`;
+
   return `
     <div class="flex row w-full items-center enter-left" style="gap: 1rem; padding: 0 1.25rem;">
       ${prIcon}
@@ -93,15 +100,15 @@ const prInfo = (count: number) => {
   `;
 };
 
-export const createSVG = async ({ 
-  owner, 
-  repo, 
-  user, 
-  starCount, 
-  prCount, 
-  commitCount, 
+export const createSVG = async ({
+  owner,
+  repo,
+  user,
+  starCount,
+  prCount,
+  commitCount,
   multiline,
-  themeOptions
+  themeOptions,
 }: BadgeParams): Promise<string> => {
   themeOptions = themeDefaults(themeOptions);
 
